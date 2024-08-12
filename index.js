@@ -1,7 +1,7 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
 
-const authors = [
+let authors = [
   {
     name: 'Robert Martin',
     id: 'afa51ab0-344d-11e9-a414-719c6709cf3e',
@@ -33,7 +33,7 @@ const authors = [
  * However, for simplicity, we will store the author's name in connection with the book
  */
 
-const books = [
+let books = [
   {
     title: 'Clean Code',
     published: 2008,
@@ -103,7 +103,10 @@ const typeDefs = `
   type Query {
     bookCount: Int
     authorCount: Int
-    allBooks(author: String): [Book!]!
+    allBooks(
+      author: String
+      genre: String
+    ): [Book!]!
     allAuthors: [Author!]!
   }
 `
@@ -113,10 +116,14 @@ const resolvers = {
     bookCount: () => books.length,
     authorCount: () => authors.length,
     allBooks: (root, args) => {
+      let filteredBooks = books.slice()
       if (args.author) {
-        return books.filter((book) => book.author === args.author)
+        filteredBooks = filteredBooks.filter((book) => book.author === args.author)
       }
-      return books
+      if (args.genre) {
+        filteredBooks = filteredBooks.filter((book) => book.genres.includes(args.genre))
+      }
+      return filteredBooks
     },
     allAuthors: () => authors
   },
