@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { GraphQLError } = require('graphql')
 
 require('dotenv').config()
 const MONGODB_URI = process.env.MONGODB_URI
@@ -90,11 +91,33 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
       if (!author) {
         author = new Author({ name: args.author })
-        await author.save()
+        try {
+          await author.save()
+        } catch (error) {
+          throw new GraphQLError('Saving author failed', {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author,
+              error
+            }
+          })
+        }
       }
       const newBook = new Book({ title: args.title, published: args.published, author, genres: args.genres })
 
-      return newBook.save()
+      try {
+        await newBook.save()
+      } catch (error) {
+        throw new GraphQLError('Saving book failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.title,
+            error
+          }
+        })
+      }
+
+      return newBook
     },
     editAuthor: async (roots, args) => {
       const author = await Author.findOne({ name: args.name })
@@ -102,7 +125,20 @@ const resolvers = {
         return null
       }
       author.born = args.setBornTo
-      return author.save()
+
+      try {
+        await author.save()
+      } catch (error) {
+        throw new GraphQLError('Setting author birth year failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            invalidArgs: args.setBornTo,
+            error
+          }
+        })
+      }
+
+      return author
     }
   }
 }
