@@ -17,6 +17,7 @@ const Login = ({ setToken }) => {
       localStorage.setItem('user-token', token)
       navigate('/')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [result.data])
 
   const submit = async (event) => {
