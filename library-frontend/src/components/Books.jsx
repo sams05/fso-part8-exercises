@@ -25,8 +25,8 @@ const Books = () => {
   const submit = (event) => {
     event.preventDefault()
 
-    if (!genre || genre === 'all genres') {
-      filterResult.updateQuery(() => undefined)
+    if (!genre || genre.value === 'all genres') {
+      getGenre()
     } else {
       getGenre({ variables: { genre: genre.value } })
     }
