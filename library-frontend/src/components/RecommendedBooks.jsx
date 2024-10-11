@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 
 const RecommendedBooks = () => {
   const userResult = useQuery(ME)
-  const [getBooks, booksResult] = useLazyQuery(FIND_GENRE)
+  const [getBooks, booksResult] = useLazyQuery(FIND_GENRE, { fetchPolicy: 'no-cache' })
 
   useEffect(() => {
     if (userResult.data?.me?.favoriteGenre) {

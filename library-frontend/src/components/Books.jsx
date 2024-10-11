@@ -6,7 +6,7 @@ import { useState } from 'react'
 const Books = () => {
   const [genre, setGenre] = useState(null)
   const result = useQuery(ALL_BOOKS)
-  const [getGenre, filterResult] = useLazyQuery(FIND_GENRE)
+  const [getGenre, filterResult] = useLazyQuery(FIND_GENRE, { fetchPolicy: 'no-cache' })
 
   if (result.loading) {
     return <div>loading...</div>
