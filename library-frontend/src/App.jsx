@@ -5,12 +5,19 @@ import Books from './components/Books'
 import NewBook from './components/NewBook'
 import Login from './components/Login'
 import RecommendedBooks from './components/RecommendedBooks'
-import { useApolloClient } from '@apollo/client'
+import { useApolloClient, useSubscription } from '@apollo/client'
 import { useEffect } from 'react'
+import { BOOK_ADDED } from './queries'
 
 const App = () => {
   const [token, setToken] = useState(null)
   const client = useApolloClient()
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      const addedBook = data.data.bookAdded
+      alert(`new book ${addedBook.title} by ${addedBook.author.name} added`)
+    }
+  })
 
   useEffect(() => {
     const token = localStorage.getItem('user-token')
