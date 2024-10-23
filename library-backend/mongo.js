@@ -45,52 +45,58 @@ const books = [
     title: 'Clean Code',
     published: 2008,
     author: authors.find(({ name }) => name === 'Robert Martin')._id,
-    id: 'afa5b6f4-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['refactoring']
   },
   {
     title: 'Agile software development',
     published: 2002,
     author: authors.find(({ name }) => name === 'Robert Martin')._id,
-    id: 'afa5b6f5-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['agile', 'patterns', 'design']
   },
   {
     title: 'Refactoring, edition 2',
     published: 2018,
     author: authors.find(({ name }) => name === 'Martin Fowler')._id,
-    id: 'afa5de00-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['refactoring']
   },
   {
     title: 'Refactoring to patterns',
     published: 2008,
     author: authors.find(({ name }) => name === 'Joshua Kerievsky')._id,
-    id: 'afa5de01-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['refactoring', 'patterns']
   },
   {
     title: 'Practical Object-Oriented Design, An Agile Primer Using Ruby',
     published: 2012,
     author: authors.find(({ name }) => name === 'Sandi Metz')._id,
-    id: 'afa5de02-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['refactoring', 'design']
   },
   {
     title: 'Crime and punishment',
     published: 1866,
     author: authors.find(({ name }) => name === 'Fyodor Dostoevsky')._id,
-    id: 'afa5de03-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['classic', 'crime']
   },
   {
     title: 'Demons',
     published: 1872,
     author: authors.find(({ name }) => name === 'Fyodor Dostoevsky')._id,
-    id: 'afa5de04-344d-11e9-a414-719c6709cf3e',
+    _id: new mongoose.Types.ObjectId(),
     genres: ['classic', 'revolution']
   }
 ]
+
+// Populate books field of each author
+authors.map((author) => {
+  author.books = books.filter((book) => book.author === author._id)
+  return author
+})
 
 mongoose
   .connect(MONGODB_URI)

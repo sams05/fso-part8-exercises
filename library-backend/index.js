@@ -19,6 +19,7 @@ const typeDefs = require('./schema')
 const resolvers = require('./resolvers')
 
 mongoose.set('strictQuery', false)
+mongoose.set('debug', true)
 
 console.log('connecting to', MONGODB_URI)
 

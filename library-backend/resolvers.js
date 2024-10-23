@@ -29,11 +29,11 @@ const resolvers = {
         }) // remove books where the author hasn't been populated i.e. doesn't match authorFilter
         .then((books) => books.filter(({ author }) => author))
     },
-    allAuthors: async () => Author.find({}),
+    allAuthors: async () => Author.find({}).populate('books', { title: 1 }),
     me: (root, args, { currentUser }) => currentUser
   },
   Author: {
-    bookCount: async (root) => (await Book.find({ author: root._id })).length
+    bookCount: (root) => root.books.length
   },
   Mutation: {
     addBook: async (root, args, { currentUser }) => {
@@ -47,22 +47,13 @@ const resolvers = {
       let author = await Author.findOne({ name: args.author })
       if (!author) {
         author = new Author({ name: args.author })
-        try {
-          await author.save()
-        } catch (error) {
-          throw new GraphQLError('Saving author failed', {
-            extensions: {
-              code: 'BAD_USER_INPUT',
-              invalidArgs: args.author,
-              error
-            }
-          })
-        }
       }
       const newBook = new Book({ title: args.title, published: args.published, author, genres: args.genres })
+      author.books = author.books.concat(newBook)
 
       try {
         await newBook.save()
+        await author.save()
       } catch (error) {
         throw new GraphQLError('Saving book failed', {
           extensions: {
